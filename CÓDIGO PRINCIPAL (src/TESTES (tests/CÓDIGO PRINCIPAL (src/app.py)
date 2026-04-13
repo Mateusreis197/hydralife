@@ -1,0 +1,49 @@
+import json
+import os
+
+DATA_FILE = "data.json"
+META_DIARIA = 2000  # ml
+
+def carregar_dados():
+    if not os.path.exists(DATA_FILE):
+        return {"agua": 0}
+    with open(DATA_FILE, "r") as f:
+        return json.load(f)
+
+def salvar_dados(dados):
+    with open(DATA_FILE, "w") as f:
+        json.dump(dados, f)
+
+def adicionar_agua(ml):
+    if ml <= 0:
+        raise ValueError("Valor inválido")
+    dados = carregar_dados()
+    dados["agua"] += ml
+    salvar_dados(dados)
+
+def progresso():
+    dados = carregar_dados()
+    return dados["agua"]
+
+def status():
+    atual = progresso()
+    if atual >= META_DIARIA:
+        return "Meta atingida!"
+    return f"Faltam {META_DIARIA - atual} ml"
+
+if __name__ == "__main__":
+    while True:
+        print("\n1 - Adicionar água")
+        print("2 - Ver progresso")
+        print("3 - Sair")
+        
+        op = input("Escolha: ")
+
+        if op == "1":
+            ml = int(input("Quantidade em ml: "))
+            adicionar_agua(ml)
+        elif op == "2":
+            print(f"Total: {progresso()} ml")
+            print(status())
+        elif op == "3":
+            break
